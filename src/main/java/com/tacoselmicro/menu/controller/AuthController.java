@@ -57,16 +57,19 @@ public class AuthController {
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
             
-            // --- LOG DE SEGURIDAD ---
+            // --- DIAGNÓSTICO PROFUNDO ---
+            System.out.println("DEBUG: Email encontrado: " + usuario.getEmail());
             System.out.println("DEBUG: Password BD: '" + usuario.getPassword() + "'");
-            System.out.println("DEBUG: Password Postman: '" + loginRequest.getPassword() + "'");
-            System.out.println("DEBUG: ¿Coinciden?: " + usuario.getPassword().equals(loginRequest.getPassword()));
-            // -------------------------
+            System.out.println("DEBUG: Password recibido: '" + loginRequest.getPassword() + "'");
+            System.out.println("DEBUG: ¿Son iguales?: " + usuario.getPassword().equals(loginRequest.getPassword()));
+            // ----------------------------
 
             if (usuario.getPassword().equals(loginRequest.getPassword())) {
-                return ResponseEntity.ok(Map.of("mensaje", "Autenticación exitosa"));
+                 // ... tu lógica de éxito
+                 return ResponseEntity.ok(Map.of("mensaje", "Autenticación exitosa"));
             }
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Unauthorized"));
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("mensaje", "Credenciales incorrectas"));
     }
 }
