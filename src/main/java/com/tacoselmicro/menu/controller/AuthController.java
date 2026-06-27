@@ -52,33 +52,21 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> autenticarUsuario(@RequestBody LoginRequest loginRequest) {
         
-        // 1. Buscar en la base de datos por el correo electrónico recibido
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(loginRequest.getEmail());
+    	Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(loginRequest.getEmail());
 
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
+            
+            // --- LOG DE SEGURIDAD ---
+            System.out.println("DEBUG: Password BD: '" + usuario.getPassword() + "'");
+            System.out.println("DEBUG: Password Postman: '" + loginRequest.getPassword() + "'");
+            System.out.println("DEBUG: ¿Coinciden?: " + usuario.getPassword().equals(loginRequest.getPassword()));
+            // -------------------------
 
-            // 2. Validar la contraseña en texto plano
             if (usuario.getPassword().equals(loginRequest.getPassword())) {
-                
-                // 3. Respuesta estructurada si coincide el password
-                Map<String, Object> respuesta = new HashMap<>();
-                respuesta.put("mensaje", "Autenticación exitosa");
-                respuesta.put("idUsuario", usuario.getId());
-                respuesta.put("username", usuario.getUsername());
-                respuesta.put("email", usuario.getEmail());
-                respuesta.put("role", usuario.getRol().getNombre());
-                respuesta.put("token", "JWT_TOKEN_GENERADO_DE_FORMA_REAL_MYSQL");
-
-                return ResponseEntity.ok(respuesta);
+                return ResponseEntity.ok(Map.of("mensaje", "Autenticación exitosa"));
             }
         }
-
-        // 4. Retorno de error unificado si el correo no existe o el password es incorrecto
-        Map<String, String> errorRespuesta = new HashMap<>();
-        errorRespuesta.put("error", "Unauthorized");
-        errorRespuesta.put("mensaje", "El correo electrónico o la contraseña son incorrectos.");
-        
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorRespuesta);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Unauthorized"));
     }
 }
