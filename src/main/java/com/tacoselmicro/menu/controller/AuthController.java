@@ -25,6 +25,9 @@ public class AuthController {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private RoleRepository roleRepository;
+    
+    @Autowired
+    private javax.sql.DataSource dataSource;
 
     @PostMapping("/register")
     public ResponseEntity<?> registrarUsuario(@RequestBody RegisterRequest registerRequest) {
@@ -51,6 +54,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> autenticarUsuario(@RequestBody LoginRequest loginRequest) {
+    	
+    	try {
+            System.out.println("DEBUG: Conectado a: " + dataSource.getConnection().getMetaData().getURL());
+        } catch (Exception e) {
+            System.out.println("DEBUG: Error al obtener URL de conexión");
+        }
         
     	Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(loginRequest.getEmail());
 
