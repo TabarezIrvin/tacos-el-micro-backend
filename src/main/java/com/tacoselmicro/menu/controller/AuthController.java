@@ -28,7 +28,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registrarUsuario(@RequestBody RegisterRequest registerRequest) {
-        if (usuarioRepository.findByEmailAndActivoTrue(registerRequest.getEmail()).isPresent()) {
+        if (usuarioRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body(Map.of("mensaje", "El correo ya está registrado"));
         }
 
@@ -53,7 +53,7 @@ public class AuthController {
     public ResponseEntity<?> autenticarUsuario(@RequestBody LoginRequest loginRequest) {
         
         // 1. Buscar en la base de datos por el correo electrónico recibido
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmailAndActivoTrue(loginRequest.getEmail());
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(loginRequest.getEmail());
 
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
